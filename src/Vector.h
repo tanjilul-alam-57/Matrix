@@ -33,21 +33,11 @@ public:
 	friend Vector<U> operator*=(const Vector<U> &,const Matrix<U>&);
 	template<class U>
 	friend Vector<U> operator*(const Vector<U>& v1, const Matrix<U>& m2);
-protected:
 	int m_size;
 	T *v_array;
 	void allocSpace();
 };
-//template<class T>
-//Vector<T> operator+(const Vector<T>&, const Vector<T>&);
-//template<class T>
-//Vector<T> operator-(const Vector<T>&, const Vector<T>&);
-//template<class T>
-//Vector<T> operator*(const Vector<T>&, double);
-//template<class T>
-//Vector<T> operator*(double, const Vector<T>&);
-//template<class T>
-//Vector<T> operator/(const Vector<T>&, double);
+
 template<class T>
 Vector<T>::Vector(int size) : m_size(size){
 	allocSpace();
@@ -76,6 +66,11 @@ Vector<T>::Vector(const Vector& v):m_size(v.m_size)
 	}
 
 }
+
+/*
+ * assign any array of same size
+ */
+
 template<class T>
 Vector<T>& Vector<T>::operator =(T buffer[])
 
@@ -134,7 +129,7 @@ Vector<T>& Vector<T>::operator /=(double num) {
 template<class T>
 Vector<T>& Vector<T>::operator +=(const Vector& v) {
 	for (int i = 0; i < m_size; ++i) {
-		v_array[i] += (T*)v.v_array[i];
+		v_array[i] += v.v_array[i];
 
 	}
 	return *this;
@@ -143,7 +138,7 @@ Vector<T>& Vector<T>::operator +=(const Vector& v) {
 template<class T>
 Vector<T>& Vector<T>::operator -=(const Vector& v) {
 	for (int i = 0; i < m_size; ++i) {
-		v_array[i] -= (T*)v.v_array[i];
+		v_array[i] -= v.v_array[i];
 	}
 	return *this;
 }
@@ -152,13 +147,18 @@ template<class T>
 
 void Vector<T>::allocSpace() {
 
-	v_array = new double[m_size];
+	v_array = new T[m_size];
 	for (int i = 0; i < m_size; ++i) {
 		v_array[i] = 0;
 	}
 }
 
 
+///////////Non-Member functions ///////////////
+
+/*
+ * Operator Overloading for printing Vector
+ */
 template<class T>
 
 std::ostream& operator<<(std::ostream& os, const Vector<T>& v)
@@ -169,6 +169,13 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& v)
 	os << endl;
 	return os;
 }
+
+/*
+ * Operator Overloading inserting element of the vector
+ * std::cin has been used here
+ *
+ */
+
 template<class T>
 std::istream& operator>>(std::istream& is, Vector<T>& v)
 {
@@ -177,18 +184,30 @@ std::istream& operator>>(std::istream& is, Vector<T>& v)
 	}
 	return is;
 }
+/*
+ * Vector of same Size can be added
+ */
+
 template<class T>
 Vector<T> operator +(const Vector<T>& v1, const Vector<T>& v2) {
 
 	Vector<T> temp(v1);
 	return (temp += v2);
 }
+/*
+ * Subtract two vectors
+ */
 template<class T>
 Vector<T> operator -(const Vector<T>& v1, const Vector<T>& v2) {
 
 	Vector<T> temp(v1);
 	return (temp -= v2);
 }
+
+/*
+ * Vector * number multiplication
+ */
+
 template<class T>
 Vector<T> operator *(const Vector<T> & v, double num) {
 
@@ -196,6 +215,10 @@ Vector<T> operator *(const Vector<T> & v, double num) {
 	return (temp *= num);
 
 }
+/*
+ * number*Vector multiplication
+ */
+
 template<class T>
 Vector<T> operator *(double num, const Vector<T>& v) {
 	return (v * num);
@@ -225,8 +248,16 @@ Vector<T> operator*=(const Vector<T> & v,const Matrix<T>& m){
 template <class T>
 Vector<T> operator*(const Vector<T>& v1, const Matrix<T>& m2)
 {
+	if(v1.m_size==m2.m_row)
+	{
     Vector<T> temp(v1);
     return (temp *= m2);
+	}
+	else
+	{
+		cout<<"Dimension does not match !!!";
+		return 0;
+	}
 }
 
 

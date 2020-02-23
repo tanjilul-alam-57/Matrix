@@ -18,7 +18,6 @@ public:
 	Matrix(const Matrix&);
 	Matrix& operator=(const Matrix&);
 	Matrix& operator=(T *array);
-
 	Matrix& operator+=(const Matrix&);
 	Matrix& operator-=(const Matrix&);
 	Matrix& operator*=(const Matrix&);
@@ -46,7 +45,7 @@ template <class T>
 Matrix<T>::Matrix() : m_row(1), m_colum(1)
 {
     allocSpace();
-    m_array[0][0] =(T**) 0;
+    m_array[0][0] = 0;
 }
 template <class T>
 Matrix<T>::~Matrix()
@@ -96,7 +95,7 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& m)
 {
     for (int i = 0; i < m_row; ++i) {
         for (int j = 0; j < m_colum; ++j) {
-            m_array[i][j] += (T**)m.m_array[i][j];
+            m_array[i][j] += m.m_array[i][j];
         }
     }
     return *this;
@@ -107,7 +106,7 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& m)
 {
     for (int i = 0; i < m_row; ++i) {
         for (int j = 0; j < m_colum; ++j) {
-            m_array[i][j] -= (T**)m.m_array[i][j];
+            m_array[i][j] -= m.m_array[i][j];
         }
     }
     return *this;
@@ -186,8 +185,18 @@ Matrix<T> operator-(const Matrix<T>& m1, const Matrix<T>& m2)
 template <class T>
 Matrix<T> operator*(const Matrix<T>& m1, const Matrix<T>& m2)
 {
-    Matrix<T> temp(m1);
+	Matrix<T> temp(m1);
+	if(m1.m_colum==m2.m_row)
+	{
     return (temp *= m2);
+	}
+	else
+	{
+		std::cout<<"Dimension does not match ";
+		return Matrix<T>();
+
+	}
+
 }
 template <class T>
 Matrix<T> operator*(const Matrix<T>& m, double num)
