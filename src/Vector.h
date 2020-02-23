@@ -12,30 +12,222 @@
 using namespace std;
 #include <iostream>
 #include"Matrix.h"
+template<class T>
 class Vector{
 public:
 	Vector(int);
 	Vector();
 	~Vector();
 	Vector(const Vector&);
-	friend std::ostream& operator<<(std::ostream&, const Vector&);
-	friend std::istream& operator>>(std::istream&, Vector&);
-	Vector& operator=(int buffer[]);
+	template<class U>
+	friend std::ostream& operator<<(std::ostream&, const Vector<U>&);
+	template<class U>
+	friend std::istream& operator>>(std::istream&, Vector<U>&);
+	Vector& operator=(T buffer[]);
 	Vector& operator=(const Vector&);
 	Vector& operator*=(double);
 	Vector& operator/=(double);
 	Vector& operator+=(const Vector&);
 	Vector& operator-=(const Vector&);
-	friend Vector operator*=(const Vector &,const Matrix&);
+	template<class U>
+	friend Vector<U> operator*=(const Vector<U> &,const Matrix<U>&);
+	template<class U>
+	friend Vector<U> operator*(const Vector<U>& v1, const Matrix<U>& m2);
 protected:
 	int m_size;
-	double *v_array;
+	T *v_array;
 	void allocSpace();
 };
-Vector operator+(const Vector&, const Vector&);
-Vector operator-(const Vector&, const Vector&);
-Vector operator*(const Vector&, double);
-Vector operator*(double, const Vector&);
-Vector operator/(const Vector&, double);
-Vector operator*(const Vector& v1, const Matrix& m2);
+//template<class T>
+//Vector<T> operator+(const Vector<T>&, const Vector<T>&);
+//template<class T>
+//Vector<T> operator-(const Vector<T>&, const Vector<T>&);
+//template<class T>
+//Vector<T> operator*(const Vector<T>&, double);
+//template<class T>
+//Vector<T> operator*(double, const Vector<T>&);
+//template<class T>
+//Vector<T> operator/(const Vector<T>&, double);
+template<class T>
+Vector<T>::Vector(int size) : m_size(size){
+	allocSpace();
+
+	for (int i = 0; i < m_size; ++i) {
+		v_array[i] = 0;
+	}
+
+}
+template<class T>
+Vector<T>::~Vector() {
+	delete[] v_array;
+}
+template<class T>
+Vector<T>::Vector():m_size(1) {
+
+	allocSpace();
+	v_array[0] = (T*)0;
+}
+template<class T>
+Vector<T>::Vector(const Vector& v):m_size(v.m_size)
+{
+	allocSpace();
+	for (int i = 0; i < m_size; ++i) {
+		v_array[i] = v.v_array[i];
+	}
+
+}
+template<class T>
+Vector<T>& Vector<T>::operator =(T buffer[])
+
+{
+	for (int i = 0; i < m_size; ++i) {
+		v_array[i] = buffer[i];
+	}
+	return *this;
+}
+template<class T>
+Vector<T>& Vector<T>::operator =(const Vector& v) {
+
+	if (this == &v) {
+		return *this;
+	}
+
+	if (m_size != v.m_size ) {
+		for (int i = 0; i < m_size; ++i) {
+			delete[] v_array;
+		}
+		delete[] v_array;
+
+		m_size = v.m_size;
+		allocSpace();
+	}
+
+	for (int i = 0; i < m_size; ++i) {
+
+		v_array[i] = (T*)v.v_array[i];
+	}
+
+	return *this;
+}
+
+
+template<class T>
+
+Vector<T>& Vector<T>::operator *=(double num) {
+
+	for (int i = 0; i < m_size; ++i) {
+
+		v_array[i] *= num;
+
+	}
+	return *this;
+}
+template<class T>
+Vector<T>& Vector<T>::operator /=(double num) {
+	for (int i = 0; i < m_size; ++i) {
+
+		v_array[i] /= num;
+
+	}
+	return *this;
+}
+template<class T>
+Vector<T>& Vector<T>::operator +=(const Vector& v) {
+	for (int i = 0; i < m_size; ++i) {
+		v_array[i] += (T*)v.v_array[i];
+
+	}
+	return *this;
+
+}
+template<class T>
+Vector<T>& Vector<T>::operator -=(const Vector& v) {
+	for (int i = 0; i < m_size; ++i) {
+		v_array[i] -= (T*)v.v_array[i];
+	}
+	return *this;
+}
+
+template<class T>
+
+void Vector<T>::allocSpace() {
+
+	v_array = new double[m_size];
+	for (int i = 0; i < m_size; ++i) {
+		v_array[i] = 0;
+	}
+}
+
+
+template<class T>
+
+std::ostream& operator<<(std::ostream& os, const Vector<T>& v)
+{
+	for (int i = 0; i < v.m_size; ++i) {
+		os << v.v_array[i]<<" ";
+	}
+	os << endl;
+	return os;
+}
+template<class T>
+std::istream& operator>>(std::istream& is, Vector<T>& v)
+{
+	for (int i = 0; i < v.m_size; ++i)  {
+		is >> (T*)v.v_array[i];
+	}
+	return is;
+}
+template<class T>
+Vector<T> operator +(const Vector<T>& v1, const Vector<T>& v2) {
+
+	Vector<T> temp(v1);
+	return (temp += v2);
+}
+template<class T>
+Vector<T> operator -(const Vector<T>& v1, const Vector<T>& v2) {
+
+	Vector<T> temp(v1);
+	return (temp -= v2);
+}
+template<class T>
+Vector<T> operator *(const Vector<T> & v, double num) {
+
+	Vector<T> temp(v);
+	return (temp *= num);
+
+}
+template<class T>
+Vector<T> operator *(double num, const Vector<T>& v) {
+	return (v * num);
+}
+template<class T>
+Vector<T> operator /(const Vector<T>& v, double num) {
+	Vector<T> temp(v);
+	return (temp /= num);
+}
+template<class T>
+Vector<T> operator*=(const Vector<T> & v,const Matrix<T>& m){
+
+
+    Vector<T> temp(m.m_colum);
+    for (int i = 0; i < m.m_colum; ++i) {
+        for (int j = 0; j < m.m_row; ++j) {
+
+                temp.v_array[i] += (v.v_array[j] * m.m_array[j][i]);
+
+        }
+    }
+    return temp;
+
+}
+
+
+template <class T>
+Vector<T> operator*(const Vector<T>& v1, const Matrix<T>& m2)
+{
+    Vector<T> temp(v1);
+    return (temp *= m2);
+}
+
+
 #endif /* VECTOR_H_ */

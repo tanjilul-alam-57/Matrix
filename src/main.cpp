@@ -14,15 +14,18 @@ using namespace std;
 
 int main() {
 
-	int array[4]= {1,2,3,4};
-	Vector v(4);
+	double array[3]= {1.2,2,3};
+	Vector<double> v(3);
 	v=array;
 	cout<<v;
-	Matrix m(3,3);
-	Matrix m1(3,3);
-	std::array<int, 16> array1={1,2,3,4,5,6,7,8,9,0,11,12,13,14,15,16};
+	Matrix <double>m(3,3);
+	Matrix <double>m1(3,3);
+	std::array<double, 16> array1={1.2,2.5,3,4,5,6,7,8,9,0,11,12,13,14,15,16};
 	m=array1.data();
 	m1=array1.data();
-	cout<<2*m1*m+m1+m;
+	Vector <double>v1=v*m;
+	cout<<v*m;;
+	cout<<m;
+	cout<<m*m1;
 	return 0;
 }
